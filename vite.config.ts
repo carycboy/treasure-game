@@ -5,7 +5,6 @@
 
   export default defineConfig({
     plugins: [react()],
-    base: '/treasure-game/',
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       alias: {
@@ -57,8 +56,5 @@
     server: {
       port: 3000,
       open: true,
-      proxy: {
-        '/api': { target: 'http://localhost:3010', changeOrigin: true },
-      },
     },
   });

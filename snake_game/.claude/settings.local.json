@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python server.py)",
+      "PowerShell(netstat *)",
+      "PowerShell(Start-Process \"http://localhost:8080\")"
+    ]
+  }
+}
