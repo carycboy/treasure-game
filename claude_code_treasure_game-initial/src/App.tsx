@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Button } from './components/ui/button';
 import closedChest from './assets/treasure_closed.png';
+import keyImg from './assets/key.png';
 import treasureChest from './assets/treasure_opened.png';
 import skeletonChest from './assets/treasure_opened_skeleton.png';
 import chestOpenSound from './audios/chest_open.mp3';
@@ -102,7 +103,7 @@ export default function App() {
             {boxes.map((box) => (
               <motion.div
                 key={box.id}
-                className="flex flex-col items-center cursor-pointer"
+                className="flex flex-col items-center cursor-pointer group"
                 whileHover={{ scale: box.isOpen ? 1 : 1.05 }}
                 whileTap={{ scale: box.isOpen ? 1 : 0.95 }}
                 onClick={() => openBox(box.id)}
@@ -120,16 +121,23 @@ export default function App() {
                   className="relative"
                 >
                   <img
-                    src={box.isOpen 
+                    src={box.isOpen
                       ? (box.hasTreasure ? treasureChest : skeletonChest)
                       : closedChest
                     }
-                    alt={box.isOpen 
+                    alt={box.isOpen
                       ? (box.hasTreasure ? "Treasure!" : "Skeleton!")
                       : "Treasure Chest"
                     }
                     className="w-48 h-48 object-contain drop-shadow-lg"
                   />
+                  {!box.isOpen && (
+                    <img
+                      src={keyImg}
+                      alt="Key"
+                      className="absolute inset-0 m-auto w-16 h-16 object-contain pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    />
+                  )}
                   
                   {box.isOpen && (
                     <motion.div
