@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Button } from './components/ui/button';
 import AuthScreen from './components/AuthScreen';
+import API_BASE from './lib/api';
 import closedChest from './assets/treasure_closed.png';
 import keyImg from './assets/key.png';
 import treasureChest from './assets/treasure_opened.png';
@@ -55,7 +56,7 @@ export default function App() {
 
   const fetchPersonalBest = async (token: string) => {
     try {
-      const res = await fetch('/api/scores/best', {
+      const res = await fetch(`${API_BASE}/api/scores/best`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
@@ -73,7 +74,7 @@ export default function App() {
   // Save score when game ends for authenticated users
   useEffect(() => {
     if (!gameEnded || !user) return;
-    fetch('/api/scores', {
+    fetch(`${API_BASE}/api/scores`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -92,21 +93,18 @@ export default function App() {
 
   const openBox = (boxId: number) => {
     if (gameEnded) return;
-    setBoxes(prevBoxes => {
-      const updatedBoxes = prevBoxes.map(box => {
-        if (box.id === boxId && !box.isOpen) {
-          new Audio(box.hasTreasure ? chestOpenSound : evilLaughSound).play();
-          const newScore = box.hasTreasure ? score + 100 : score - 50;
-          setScore(newScore);
-          return { ...box, isOpen: true };
-        }
-        return box;
-      });
-      const treasureFound = updatedBoxes.some(box => box.isOpen && box.hasTreasure);
-      const allOpened = updatedBoxes.every(box => box.isOpen);
-      if (treasureFound || allOpened) setGameEnded(true);
-      return updatedBoxes;
-    });
+    const box = boxes.find(b => b.id === boxId && !b.isOpen);
+    if (!box) return;
+
+    new Audio(box.hasTreasure ? chestOpenSound : evilLaughSound).play();
+    const updatedBoxes = boxes.map(b => b.id === boxId ? { ...b, isOpen: true } : b);
+
+    setBoxes(updatedBoxes);
+    setScore(prev => prev + (box.hasTreasure ? 100 : -50));
+
+    const treasureFound = updatedBoxes.some(b => b.isOpen && b.hasTreasure);
+    const allOpened = updatedBoxes.every(b => b.isOpen);
+    if (treasureFound || allOpened) setGameEnded(true);
   };
 
   const handleAuth = (userData: User) => {

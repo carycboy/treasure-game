@@ -1,5 +1,6 @@
 import { useState, FormEvent } from 'react';
 import { Button } from './ui/button';
+import API_BASE from '../lib/api';
 
 interface User {
   username: string;
@@ -30,7 +31,7 @@ export default function AuthScreen({ onAuth, onGuest }: AuthScreenProps) {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch(tab === 'signin' ? '/api/auth/signin' : '/api/auth/signup', {
+      const res = await fetch(`${API_BASE}${tab === 'signin' ? '/api/auth/signin' : '/api/auth/signup'}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: username.trim(), password }),
